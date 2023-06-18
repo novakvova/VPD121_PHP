@@ -24,6 +24,38 @@
                         "description": "List Categories."
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "75c388e2c6bd800c115e7884d915a82f",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [],
+                                "properties": {
+                                    "image": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
             }
         }
     }
