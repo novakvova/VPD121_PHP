@@ -1,39 +1,25 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import axios from "axios";
+import CategoryListPage from "./components/category/list/CategoryListPage";
+import {Route, Routes} from "react-router-dom";
+import CategoryCreatePage from "./components/category/create/CategoryCreatePage";
+import CategoryEditPage from "./components/category/edit/CategoryEditPage";
 
 function App() {
-    useEffect(()=>{
-        axios.get("http://laravel.vpd121.com/api/category")
-            .then(resp=> {
-                console.log("Server result", resp.data);
-            });
-        console.log("Use effect working");
-    },[]);
+
 
     return (
         <>
-            <h1 className="text-center">Категорії</h1>
-            <div className="container">
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Назва</th>
-                        <th>Фото</th>
-                        <th>Опис</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Сало</td>
-                        <td>1.jpg</td>
-                        <td>Козак</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <Routes>
+                <Route path={"/"}>
+                    <Route index element={<CategoryListPage/>}/>
+                    <Route path={"category"}>
+                        <Route path={"create"} element={<CategoryCreatePage/>}/>
+                        <Route path={"edit/:id"} element={<CategoryEditPage/>}/>
+                    </Route>
+                </Route>
+            </Routes>
         </>
     );
 }
