@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ICategoryItem} from "./types";
 import http_common from "../../../http_common";
 import {Link} from "react-router-dom";
+import {APP_ENV} from "../../../env";
 
 const CategoryListPage = () => {
     const [list, setList] = useState<ICategoryItem[]>([]);
@@ -20,7 +21,9 @@ const CategoryListPage = () => {
             <tr key={item.id}>
                 <td>{item.id}</td>
                 <td>{item.name}</td>
-                <td>{item.image}</td>
+                <td>
+                    <img src={`${APP_ENV.BASE_URL}uploads/150_${item.image}`} width={150} alt={"фото"}/>
+                </td>
                 <td>{item.description}</td>
                 <td>
                     <Link to={`/category/edit/${item.id}`} className={"btn btn-success"}>Змінити</Link>

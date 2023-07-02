@@ -3,11 +3,13 @@ import {useFormik} from "formik";
 import http_common from "../../../http_common";
 import {ICategoryItem} from "../list/types";
 import {useNavigate} from "react-router-dom";
+import defaultImage from "../../../assets/default.jpg";
+import {ChangeEvent} from "react";
 
 const CategoryCreatePage = () => {
     const init : ICategoryCreate = {
         name: "",
-        image: "",
+        image: null,
         description: ""
     };
 
@@ -15,7 +17,12 @@ const CategoryCreatePage = () => {
     const onFormikSubmit = async (values: ICategoryCreate) => {
         //console.log("Create category data", values);
         try {
-            const result =  await http_common.post<ICategoryItem>("api/category", values);
+            const result =
+                await http_common.post<ICategoryItem>("api/category", values, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
             console.log("Add category is good", result.data);
             navigate("/");
         }
@@ -29,7 +36,20 @@ const CategoryCreatePage = () => {
         onSubmit: onFormikSubmit,
         initialValues: init
     });
-    const {values, handleChange, handleSubmit} = formik;
+    const {values, handleChange, handleSubmit, setFieldValue} = formik;
+
+    const onFileChangeHandler = (e:ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if(files) {
+            const file = files[0];
+            const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+            if(!allowedTypes.includes(file.type)) {
+                alert("Не доступний формат файлу!");
+                return;
+            }
+            setFieldValue(e.target.name, file);
+        }
+    }
 
     return (
         <>
@@ -48,14 +68,17 @@ const CategoryCreatePage = () => {
                         />
                     </div>
                     <div className="mb-3">
-                        <label htmlFor="image" className="form-label">Фото</label>
+                        <label htmlFor="image">
+                            <img src={values.image==null ? defaultImage : URL.createObjectURL(values.image)}
+                                 width={200} alt="фото"
+                                style={{cursor: "pointer"}} />
+                        </label>
                         <input
-                            type="text"
-                            className="form-control"
+                            type="file"
+                            className="d-none"
                             id="image"
                             name={"image"}
-                            value={values.image}
-                            onChange={handleChange}
+                            onChange={onFileChangeHandler}
                         />
                     </div>
 

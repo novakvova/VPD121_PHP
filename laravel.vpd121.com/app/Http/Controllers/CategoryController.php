@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Intervention\Image\Image;
+use Intervention\Image\Facades\Image;
 use Validator;
 
 class CategoryController extends Controller
