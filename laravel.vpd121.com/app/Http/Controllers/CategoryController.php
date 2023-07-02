@@ -137,7 +137,7 @@ class CategoryController extends Controller
      *                 required={"name"},
      *                 @OA\Property(
      *                     property="image",
-     *                     type="string"
+     *                     type="file"
      *                 ),
      *                 @OA\Property(
      *                     property="name",
@@ -158,18 +158,41 @@ class CategoryController extends Controller
         $input = $request->all(); //Отримав значення усіх полів, які прийшли від клієнта
         $message = array(
           'name.required'=>'Вкажіть назву категорії',
-          'image.required'=>'Вкажіть фото категорії',
           'description.required'=>'Вкажіть опис категорії',
         );
         $validation = Validator::make($input, [
             'name'=>'required',
-            'image'=>'required',
             'description'=>'required',
         ], $message);
 
         if($validation->fails()) {
             return response()->json($validation->errors(), 400,
                 ["Content-Type"=>"application/json;charset=UTF-8", "Charset" => "utf-8"], JSON_UNESCAPED_UNICODE);
+        }
+
+        if($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = uniqid().'.'.$image->getClientOriginalExtension();
+            $sizes = [50, 150, 300, 600, 1200];
+            //видаляю старі фото
+            foreach ($sizes as $size) {
+                $fileDelete = $size.'_'.$category->image; //бере фото, яке в БД
+                $removeImage = public_path('upload/'.$fileDelete);
+                if(file_exists($removeImage))
+                    unlink($removeImage);
+            }
+            foreach ($sizes as $size) {
+                $fileSave = $size.'_'.$filename;
+                $resizeImage = Image::make($image)->resize($size, null, function($contraint){
+                    $contraint->aspectRatio();
+                })->encode();
+                $path = public_path("uploads/".$fileSave);
+                file_put_contents($path, $resizeImage);
+            }
+            $input['image']=$filename;
+        }
+        else {
+            $input['image']=$category->image; //якщо фото не передали, то буде стара фотка
         }
 
         $category->update($input);
