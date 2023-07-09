@@ -180,6 +180,19 @@
                     }
                 }
             }
+        },
+        "/api/product": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "5cc57bec35d0f2045983cc8dcd00eccd",
+                "responses": {
+                    "200": {
+                        "description": "Get All Products."
+                    }
+                }
+            }
         }
     }
 }
